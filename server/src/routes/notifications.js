@@ -23,6 +23,36 @@ router.get("/:receiverId", async (req, res) => {
             receiver: req.params.receiverId,
             seen: false
         })
+
+        // const notifications = await Notification.find({
+        //     receiver: req.params.receiverId,
+        //     seen: false
+        // }).populate({path: "sender", select: ["username", "profilePicture"]})
+
+        // const notifications = await Notification.aggregate([
+        //     {$lookup: {
+        //         from: "users",
+        //         localField: "sender",
+        //         foreignField: "_id",
+        //         as: "profile"
+        //     }}
+        // ])
+
+        res.status(200).json(notifications)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+})
+
+// get all message notifications for a receiver and sender
+router.get("/:receiverId/:senderId/:type", async (req, res) => {
+    try {
+        const notifications = await Notification.find({
+            receiver: req.params.receiverId,
+            sender: req.params.senderId,
+            type: req.params.type
+        })
         res.status(200).json(notifications)
     } catch (error) {
         res.status(500).json(error)

@@ -1,6 +1,5 @@
-import { useEffect } from "react"
+import { useContext, useEffect, useState } from "react"
 import axios from 'axios'
-import { useState } from "react"
 import { IconButton, Menu, MenuItem } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DoDisturbOnIcon from '@mui/icons-material/DoDisturbOn';
@@ -9,6 +8,9 @@ import { Link } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import DeletePopup from "./deletePopup";
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import { AuthContext } from "../../context/AuthContext";
+import VolumeMuteIcon from '@mui/icons-material/VolumeMute';
+import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 
 const dummyImage = "https://gravatar.com/avatar/dd7eb5a6be08145cfd591ceae8f341ca?s=400&d=mp&r=x"
 const PF = process.env.REACT_APP_PUBLIC_FOLDER;
@@ -19,6 +21,8 @@ const CurrentChatHeader = (props) => {
     const [anchorEl, setAnchorEl] = useState(null)
     const { enqueueSnackbar } = useSnackbar()
     const isMenuOpen = Boolean(anchorEl);
+
+    const { user: currentUser, dispatch } = useContext(AuthContext)
 
     console.log("@!:", props.currentChat)
 
@@ -78,9 +82,21 @@ const CurrentChatHeader = (props) => {
         setPopupOpen(true);
     };
 
+    const handleMuteUnmuteNotifySound = (value) => {
+        axios.put(`${process.env.REACT_APP_API_SERVICE}/api/users/${currentUser._id}`, { muteNotifySound: value, userId: currentUser._id })
+            .then((res) => {
+                console.log("mute success:", res.data)
+                window.localStorage.setItem("user", JSON.stringify(res.data))
+                dispatch({ type: "MUTE_UNMUTE_NOTIFY_SOUND", payload: value })
+            })
+            .catch((error) => {
+                console.log("error:", error)
+            })
+    }
+
     const renderPostMenu = (
         <Menu
-            //   onClick={handleMenuClose}
+            onClick={handlePostMenuClose}
             anchorEl={anchorEl}
             anchorOrigin={{
                 vertical: 'top',
@@ -101,6 +117,12 @@ const CurrentChatHeader = (props) => {
                     {/* <MenuItem component={Link} onClick={() => handleCopyPost(post._id)}><LinkIcon sx={{ marginRight: "0.5rem" }} /> Copy link to post</MenuItem> */}
                     {/* <MenuItem component={Link} onClick={() => handleUnfollow(post.userId)}><DoDisturbOnIcon sx={{ marginRight: "0.5rem" }} /> Unfollow {user.username}</MenuItem> */}
                     <MenuItem component={Link} to={`/profile/${user.username}`}><VisibilityIcon sx={{ marginRight: "0.5rem" }} /> View profile</MenuItem>
+                    
+                    <MenuItem onClick={()=>handleMuteUnmuteNotifySound(!currentUser?.muteNotifySound)}>
+                        {currentUser?.muteNotifySound == true ?  <VolumeMuteIcon sx={{ marginRight: "0.5rem" }} /> : <VolumeOffIcon sx={{ marginRight: "0.5rem" }} />}
+                        {currentUser?.muteNotifySound == true ? "Unmute" : "Mute"} sound
+                    </MenuItem>
+                    
                     <MenuItem component={Link} onClick={handleClickOpen}><DeleteIcon sx={{ marginRight: "0.5rem" }} /> Delete all Messages</MenuItem>
                 </>
             }
@@ -117,9 +139,9 @@ const CurrentChatHeader = (props) => {
                 {/* {console.log("abba abda:", user)} */}
                 <div className="left">
                     <Link component={Link} to={`/profile/${user.username}`}>
-                    <img
-                        src={(user.profilePicture == '') ? dummyImage : PF + user.profilePicture} alt={user.username}
-                    />
+                        <img
+                            src={(user.profilePicture == '') ? dummyImage : PF + user.profilePicture} alt={user.username}
+                        />
                     </Link>
                     <Link component={Link} to={`/profile/${user.username}`}><span>{user.username}</span></Link>
                     <p>{props.typing ? 'is typing...' : ''}</p>

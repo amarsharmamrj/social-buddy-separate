@@ -18,6 +18,14 @@ const AuthReducer = (state, action) => {
                 isFetching: false,
                 error: action.payload
             }
+        case "MUTE_UNMUTE_NOTIFY_SOUND":
+            return {
+                ...state,
+                user: {
+                    ...state.user,
+                    muteNotifySound: action.payload
+                }
+            }
         case "FOLLOW":
             return {
                 ...state,

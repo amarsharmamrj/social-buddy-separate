@@ -20,6 +20,14 @@ export const LoginFailure = (error) => {
     }
 }
 
+export const MuteUnmuteNotifySound = (data) => {
+    return {
+        type: "MUTE_UNMUTE_NOTIFY_SOUND",
+        payload: data
+    
+    }
+}
+
 export const Follow = (userId) => {
     return {
         type: "FOLLOW",

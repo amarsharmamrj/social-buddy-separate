@@ -7,13 +7,13 @@ if(loginUser){
     parsedUser = JSON.parse(loginUser)
 } 
 
-const notifications =  window.localStorage.getItem("notifications")
-let parsedNotifications;
-if(notifications){
-    parsedNotifications = JSON.parse(notifications)
-}else {
-    parsedNotifications = []
-}
+// const notifications =  window.localStorage.getItem("notifications")
+// let parsedNotifications;
+// if(notifications){
+//     parsedNotifications = JSON.parse(notifications)
+// }else {
+//     parsedNotifications = []
+// }
 
 const INITIAL_STATE = {
     user: parsedUser,

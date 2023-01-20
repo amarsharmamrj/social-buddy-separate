@@ -5,7 +5,8 @@ const notificationSchema = new mongoose.Schema({
         type: String,
     },
     sender: {
-        type: String
+        type: String,
+        ref: "User"
     },
     receiver: {
         type: String

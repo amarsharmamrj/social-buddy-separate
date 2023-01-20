@@ -20,6 +20,8 @@ import Typography from '@mui/material/Typography';
 import { useSnackbar } from "notistack";
 const PF = process.env.REACT_APP_PUBLIC_FOLDER;
 
+const image = "../assets/chat.webp"
+
 const MessengerOtherScreen = () => {
     const { user, dispatch, noti: notifications } = useContext(AuthContext)
     const { enqueueSnackbar } = useSnackbar()
@@ -43,6 +45,7 @@ const MessengerOtherScreen = () => {
     const [freindIsTypingConvId, setFreindIsTypingConvId] = useState(false)
     const [activeConv, setActiveConv] = useState("")
 
+    const [muteNotiAudio, setMuteNotiAudio] = useState(false)
 
     const [value, setValue] = useState(0);
 
@@ -100,10 +103,13 @@ const MessengerOtherScreen = () => {
         // clear notification for selected chat
         let freindId = item.members.find((id) => id != user._id)
         let items = notifications.filter((notiItem) => notiItem.sender != freindId)
-        window.localStorage.setItem("notifications", JSON.stringify(items))
-        dispatch({ type: "REMOVE_NOTI", payload: freindId })
+        // window.localStorage.setItem("notifications", JSON.stringify(items))
+        // dispatch({ type: "REMOVE_NOTI", payload: freindId })
+
+        let notiOfFriend = notifications.find((notiItem) => notiItem.sender == freindId)
+        if (notiOfFriend != null) updateNotification(notiOfFriend._id)
         // clear notification for selected chat
-        
+
         setCurrentChat(item)
         setIsImageSelected(false)
 
@@ -150,6 +156,7 @@ const MessengerOtherScreen = () => {
     }
 
     const handleSendMessage = () => {
+        document.getElementById("audio")?.play()
         handleCloseModel()
         if (messageRef.current.value != "" || imageSelected != "") {
             const model = {
@@ -166,6 +173,8 @@ const MessengerOtherScreen = () => {
                 text: messageRef.current.value,
                 image: isImageSelected ? imageSelected : ""
             })
+
+            getMessangeNotificationsForSenderAndReceiver("message", user._id, receiverId, messageRef.current.value)
 
             axios.post(`${process.env.REACT_APP_API_SERVICE}/api/messages/`, model)
                 .then((res) => {
@@ -316,18 +325,83 @@ const MessengerOtherScreen = () => {
         })
     }, [user])
 
+    const saveNotification = (type, sender, receiver, desc, previousNotifications) => {
+        let duplicateFoud;
+        if (previousNotifications != null) duplicateFoud = previousNotifications.find((notiItem) => notiItem?.sender == sender && notiItem?.receiver == receiver && notiItem?.type == "message" && notiItem?.seen == false)
+        console.log("duplicateFoud:", duplicateFoud)
+
+        if (duplicateFoud == null) {
+            const model = {
+                type: type,
+                sender: sender,
+                receiver: receiver,
+                desc: desc,
+            }
+            console.log("notification model:", model)
+            axios.post(`${process.env.REACT_APP_API_SERVICE}/api/notifications`, model)
+                .then((res) => {
+                    console.log("notification res:", res.data)
+                })
+                .catch((error) => {
+                    console.log("notification error:", error)
+                })
+        }
+    }
+    const updateNotification = (notiId) => {
+        const model = {
+            seen: true
+        }
+        console.log("notification model:", model)
+        axios.put(`${process.env.REACT_APP_API_SERVICE}/api/notifications/${notiId}`, model)
+            .then((res) => {
+                console.log("notification res:", res.data)
+                getNotifications(user._id)
+            })
+            .catch((error) => {
+                console.log("notification error:", error)
+            })
+    }
+
+    const getNotifications = (receiver) => {
+        axios.get(`${process.env.REACT_APP_API_SERVICE}/api/notifications/${receiver}`)
+            .then((res) => {
+                console.log("user notifications res:", res.data)
+                dispatch({ type: "ALL_NOTI", payload: res.data })
+            })
+            .catch((error) => {
+                console.log("user notifications error:", error)
+            })
+    }
+
+    const getMessangeNotificationsForSenderAndReceiver = (type, sender, receiver, desc) => {
+        axios.get(`${process.env.REACT_APP_API_SERVICE}/api/notifications/${receiver}/${sender}/${type}`)
+            .then((res) => {
+                console.log("getMessangeNotificationsForSenderAndReceiver notifications res:", res.data)
+                saveNotification("message", sender, receiver, desc, res?.data)
+                // dispatch({ type: "ALL_NOTI", payload: res.data })
+            })
+            .catch((error) => {
+                console.log("getMessangeNotificationsForSenderAndReceiver notifications error:", error)
+            })
+    }
+
     useEffect(() => {
         if (arrivalMessage != null) {
             let item = arrivalMessage
-            if (notifications.find((notiItem) => notiItem.sender == item.sender) == null) {
-                window.localStorage.setItem("notifications", JSON.stringify([...notifications, item]))
-                dispatch({ type: "ADD_NOTI", payload: item })
-            }
+            getNotifications(user._id)
+            console.log("abcd")
+            document.getElementById("audioNotify")?.play()
         }
     }, [arrivalMessage])
 
     return (
         <Box className="messenger-container">
+            {user.muteNotifySound == false ? (
+                <>
+                    <audio id="audio" src="/sent.mp3"></audio>
+                    <audio id="audioNotify" src="/notify.mp3"></audio>
+                </>
+            ) : ""}
             <Grid container>
                 <Grid item xs={12} sm={3} md={3}>
                     <Box className="recent-chats-list-box">

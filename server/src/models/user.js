@@ -54,6 +54,10 @@ const UserSchema = new mongoose.Schema({
     relationship: {
         type: Number,
         enum: [1, 2, 3]
+    },
+    muteNotifySound: {
+        type: Boolean,
+        default: false
     }
 },
     { timestamps: true }

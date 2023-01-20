@@ -65,6 +65,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const TopBar = () => {
   const { user, noti } = useContext(AuthContext)
+  const messgageCount = noti?.filter((item) => item.type == "message").length
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
@@ -249,20 +251,22 @@ const TopBar = () => {
                 Hi
               </Badge>
             </IconButton> */}
-            <IconButton component={Link} to="/messenger" size="large" aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={noti.length} color="error">
-                <ChatIcon />
-              </Badge>
-            </IconButton>
-            {/* <IconButton
+            <IconButton
               size="large"
               aria-label="show 17 new notifications"
               color="inherit"
+              component={Link}
+              to="/notifications"
             >
-              <Badge badgeContent={17} color="error">
+              <Badge badgeContent={noti?.length} color="error">
                 <NotificationsIcon />
               </Badge>
-            </IconButton> */}
+            </IconButton>
+            <IconButton component={Link} to="/messenger" size="large" aria-label="show 4 new mails" color="inherit">
+              <Badge badgeContent={messgageCount} color="error">
+                <ChatIcon />
+              </Badge>
+            </IconButton>
             <IconButton
               size="large"
               edge="end"
@@ -278,6 +282,17 @@ const TopBar = () => {
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
+              aria-label="show 17 new notifications"
+              color="inherit"
+              component={Link}
+              to="/notifications"
+            >
+              <Badge badgeContent={noti?.length} color="error">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+            <IconButton
+              size="large"
               aria-label="show more"
               aria-controls={mobileMenuId}
               aria-haspopup="true"
@@ -286,7 +301,7 @@ const TopBar = () => {
               to={`/messenger`}
               color="inherit"
             >
-              <Badge badgeContent={noti.length} color="error">
+              <Badge badgeContent={messgageCount} color="error">
                 <ChatIcon />
               </Badge>
             </IconButton>

@@ -11,6 +11,7 @@ import UpdateProfile from './pages/updateProfile'
 import ViewPost from './pages/viewPost'
 import AllFriends from './pages/allFriends'
 import axios from 'axios'
+import Notifications from './pages/notifications'
 
 const Router = () => {
     const { user, dispatch } = useContext(AuthContext)
@@ -42,6 +43,7 @@ const Router = () => {
                 <Route path="/profile/update/:id" element={<UpdateProfile />} />
                 <Route path="/post/:postId" element={<ViewPost />} />
                 <Route path="/all-friends" element={<AllFriends />} />
+                <Route path="/notifications" element={<Notifications />} />
             </Routes>
         </Template>
     )
