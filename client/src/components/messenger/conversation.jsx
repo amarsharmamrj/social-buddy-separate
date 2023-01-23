@@ -156,6 +156,12 @@ const Conversation = (props) => {
                             ))}
                         </SpeedDial>
                     </Box> */}
+                    <Tooltip title="add file">
+                        {/* <IconButton ref={props.gifButtonRef} className="messenger-icon-buttons" onClick={props.handleGifButton}> */}
+                        <IconButton ref={props.gifButtonRef} className="messenger-icon-buttons" onClick={() => props.widgetRef.current.open()}>
+                            <AttachFileIcon />
+                        </IconButton>
+                    </Tooltip>
                     <Tooltip title="add gif">
                         <IconButton ref={props.gifButtonRef} className="messenger-icon-buttons" onClick={props.handleGifButton}>
                             <GifIcon />

@@ -48,7 +48,10 @@ const MessengerOtherScreen = () => {
 
     const [value, setValue] = useState(0);
 
-    const socket = { current: currentSocket}
+    const cloudinaryRef = useRef()
+    const widgetRef = useRef()
+
+    const socket = { current: currentSocket }
 
     // const socket = useRef(io("ws://localhost:7000"))
     // let count = 0
@@ -368,7 +371,7 @@ const MessengerOtherScreen = () => {
 
     const saveNotification = (type, sender, receiver, desc, previousNotifications) => {
         let duplicateFoud;
-        if(previousNotifications != null) duplicateFoud = previousNotifications.find((notiItem) => notiItem?.sender == sender && notiItem?.receiver == receiver && notiItem?.type == "message" && notiItem?.seen == false)
+        if (previousNotifications != null) duplicateFoud = previousNotifications.find((notiItem) => notiItem?.sender == sender && notiItem?.receiver == receiver && notiItem?.type == "message" && notiItem?.seen == false)
         console.log("duplicateFoud:", duplicateFoud)
 
         if (duplicateFoud == null) {
@@ -434,6 +437,30 @@ const MessengerOtherScreen = () => {
             document.getElementById("audioNotify").play()
         }
     }, [arrivalMessage])
+
+    useEffect(() => {
+        cloudinaryRef.current = window.cloudinary
+        console.log("upload cloudinaryRef.current:", cloudinaryRef.current)
+        widgetRef.current = cloudinaryRef.current.createUploadWidget({
+            cloudName: "dvhb339oe",
+            uploadPreset: "chtt7osr"
+        }, (error, result) => {
+            console.log("cloudinary result:", result)
+            if (result.event === 'upload-added') {
+                widgetRef.current.minimize()
+            } else if (result.event === 'success') {
+                if (result.info.audio == null) {
+                    setIsImageSelected(true)
+                    setImageSelected(result.info.secure_url)
+                }
+                console.log("upload success:", result)
+            } else if (result.event === 'close') {
+                console.log("upload closed:")
+            }
+        })
+        console.log("upload widgetRef:", widgetRef)
+        console.log("cloudinary:", cloudinaryRef)
+    }, [])
 
     return (
         <Box className="messenger-container">
@@ -527,6 +554,7 @@ const MessengerOtherScreen = () => {
                                 handleMessageDelete={handleMessageDelete}
                                 getConversation={getConversation}
                                 handleChat={handleChat}
+                                widgetRef={widgetRef}
                             />
                         ) : (
                             <div className="no-conversation-selected-box" style={{ backgroundImage: `url(${PF}chat-bg-1.webp)`, backgroundColor: "rgb(234 250 255)", backgroundBlendMode: "exclusion" }}>

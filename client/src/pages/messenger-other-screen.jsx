@@ -49,6 +49,9 @@ const MessengerOtherScreen = () => {
 
     const [value, setValue] = useState(0);
 
+    const cloudinaryRef = useRef()
+    const widgetRef = useRef()
+
     // const socket = useRef(io("ws://localhost:7000"))
     const socket = { current: currentSocket }
     // const socket = useRef(io("ws://localhost:7000"))
@@ -400,6 +403,30 @@ const MessengerOtherScreen = () => {
         }
     }, [arrivalMessage])
 
+    useEffect(() => {
+        cloudinaryRef.current = window.cloudinary
+        console.log("upload cloudinaryRef.current:", cloudinaryRef.current)
+        widgetRef.current = cloudinaryRef.current.createUploadWidget({
+            cloudName: "dvhb339oe",
+            uploadPreset: "chtt7osr"
+        }, (error, result) => {
+            console.log("cloudinary result:", result)
+            if(result.event === 'upload-added'){
+                widgetRef.current.minimize()
+            }else if (result.event === 'success') {
+                if (result.info.audio == null) {
+                    setIsImageSelected(true)
+                    setImageSelected(result.info.secure_url)
+                }
+                console.log("upload success:", result)
+            } else if (result.event === 'close') {
+                console.log("upload closed:")
+            }
+        })
+        console.log("upload widgetRef:", widgetRef)
+        console.log("cloudinary:", cloudinaryRef)
+    }, [])
+
     return (
         <Box className="messenger-container">
             {user.muteNotifySound == false ? (
@@ -476,6 +503,7 @@ const MessengerOtherScreen = () => {
                                 freindIsTypingConvId={freindIsTypingConvId}
                                 handleMessageDelete={handleMessageDelete}
                                 getConversation={getConversation}
+                                widgetRef={widgetRef}
                             />
                         ) : (
                             <div className="no-conversation-selected-box" style={{ backgroundImage: `url(${PF}chat-bg-1.webp)`, backgroundColor: "rgb(234 250 255)", backgroundBlendMode: "exclusion" }}>
