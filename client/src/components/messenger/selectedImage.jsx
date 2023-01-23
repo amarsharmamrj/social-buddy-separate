@@ -1,4 +1,3 @@
-import {format} from 'timeago.js'
 import moment from 'moment'
 import { useRef } from 'react'
 import { useEffect } from 'react'

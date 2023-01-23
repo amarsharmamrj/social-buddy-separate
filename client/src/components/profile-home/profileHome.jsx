@@ -9,7 +9,7 @@ const dummyCoverImage = "https://images.pexels.com/photos/572897/pexels-photo-57
 const PF = process.env.REACT_APP_PUBLIC_FOLDER;
 
 const ProfileHome = () => {
-    const { user } = useContext(AuthContext)
+    const { user, socket } = useContext(AuthContext)
     return (
         <div className="profile-home">
             <div className="images-container">

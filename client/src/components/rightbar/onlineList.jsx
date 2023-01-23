@@ -3,9 +3,14 @@ import { useEffect } from "react"
 import axios from 'axios'
 import { useState } from "react"
 import { Link } from "react-router-dom"
+import { useContext } from "react"
+import { AuthContext } from "../../context/AuthContext"
 
-const OnlineList = () => {
+const OnlineList = (props) => {
+    const dummyImage = "https://gravatar.com/avatar/dd7eb5a6be08145cfd591ceae8f341ca?s=400&d=mp&r=x"
+    const PF = process.env.REACT_APP_PUBLIC_FOLDER;
     const [friends, setFriends] = useState([])
+    const { user, socket, onlineUsers } = useContext(AuthContext)
 
     const profileStyle = {
         height: "32px",
@@ -28,42 +33,50 @@ const OnlineList = () => {
         axios.get(`${process.env.REACT_APP_API_SERVICE}/api/users/all`)
             .then((res) => {
                 console.log("aabb:", res.data)
-                setFriends(res.data)
+                const freinds = res.data.filter((item) => item._id != user._id)
+                setFriends(freinds)
             })
             .catch((err) => {
                 console.log(err)
-        })
+            })
     }
 
-    useEffect(()=> {
+    useEffect(() => {
         getAllUsers()
     }, [])
-    
+
     return (
         <>
-        <p style={{padding: "0.7rem 0 0 0rem", margin: "0"}}>All Users</p>
-        <List sx={{padding: "0.4"}}>
-            {
-                friends.length > 0 ? (
-                    friends.map((item, i) => {
-                        return (
-                            <Link to={`/profile/${item.username}`} className="all-friends-list-item">
-                                <ListItem key={`online${i}`}>
-                                    <ListItemIcon style={{position: "relative"}}>
-                                        <img style={profileStyle} src="https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="" />
-                                        {/* <span style={onlineDotStyle}></span> */}
-                                    </ListItemIcon>
-                                    <ListItemText>{item.username}</ListItemText>
-                                </ListItem>
-                                {/* <Divider sx={{width: "95%", marginLeft: "auto"}} /> */}
-                            </Link>
-                        )
-                    })
-                ) : ("No Friends yet, add friends")
-            }
-        </List>
+            <p style={{ padding: "0.7rem 0 0 0rem", margin: "0" }}>All Users</p>
+            <List sx={{ padding: "0.4" }}>
+                {console.log("## onlineUsers:", onlineUsers)}
+                {
+                    friends.length > 0 ? (
+                        friends.map((item, i) => {
+                            return (
+                                <Link to={`/profile/${item.username}`} className="all-friends-list-item">
+                                    <ListItem key={`online${i}`}>
+                                        <ListItemIcon style={{ position: "relative" }}>
+                                            <img
+                                                style={profileStyle}
+                                                src={(item.profilePicture == '') ? dummyImage : PF + item.profilePicture} alt={item.username}
+                                            />
+                                            {
+                                                onlineUsers?.find((user) => user.userId == item._id) != null ? (
+                                                    <span style={onlineDotStyle}></span>
+                                                ) : ""
+                                            }
+                                        </ListItemIcon>
+                                        <ListItemText>{item.username}</ListItemText>
+                                    </ListItem>
+                                </Link>
+                            )
+                        })
+                    ) : ("No Friends yet, add friends")
+                }
+            </List>
         </>
-    )   
+    )
 }
 
 export default OnlineList

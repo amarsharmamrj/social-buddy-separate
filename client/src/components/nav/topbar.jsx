@@ -258,12 +258,12 @@ const TopBar = () => {
               component={Link}
               to="/notifications"
             >
-              <Badge badgeContent={noti?.length} color="error">
+              <Badge badgeContent={noti?.length > 9 ? "9+" : noti?.length} color="error">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
             <IconButton component={Link} to="/messenger" size="large" aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={messgageCount} color="error">
+              <Badge badgeContent={messgageCount > 9 ? "9+" : messgageCount} color="error">
                 <ChatIcon />
               </Badge>
             </IconButton>
@@ -301,7 +301,7 @@ const TopBar = () => {
               to={`/messenger`}
               color="inherit"
             >
-              <Badge badgeContent={messgageCount} color="error">
+              <Badge badgeContent={messgageCount > 9 ? "9+" : messgageCount} color="error">
                 <ChatIcon />
               </Badge>
             </IconButton>

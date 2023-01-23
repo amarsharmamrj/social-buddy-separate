@@ -48,6 +48,17 @@ io.on("connection", (socket) => {
         }
     })
 
+    // router connect
+    socket.on("routerConnect", ({data}) => {
+        console.log("routerConnect:", data)
+        // const user = getUser(receiverId)
+        // if(user){
+        //     io.to(user.socketId).emit("getMessage", {
+        //         senderId, text, image
+        //     })
+        // }
+    })
+
     // typing
     socket.on("typing", ({receiverId, typing, conversationId}) => {
         const user = getUser(receiverId)

@@ -12,6 +12,8 @@ import { useParams } from 'react-router-dom';
 import Follow from '../components/profile/follow';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import Followers from '../components/profile/followers';
+import Followings from '../components/profile/followings';
 
 
 const Profile = () => {
@@ -49,6 +51,8 @@ const Profile = () => {
                 <Grid item xs={12} sm={12} md={12}>
                     <Box sx={{ display: { xs: "block", sm: "block", md: "none", lg: "none", xl: "none" } }}>
                         <Freinds user={user} />
+                        <Followers user={user} />
+                        <Followings user={user} />
                     </Box>
                 </Grid>
                 <Grid item container xs={12} sm={12} md={12}>
@@ -58,8 +62,10 @@ const Profile = () => {
                     <Grid item xs={12} sm={12} md={4}>
                         {user._id !== currentUser._id && <Follow user={user} />}
                         <Box sx={{ display: { xs: "none", sm: "none", md: "block", lg: "block", xl: "block" } }}>
-                        <ProfileInfo user={user} />
-                        <Freinds user={user} />
+                            <ProfileInfo user={user} />
+                            <Freinds user={user} />
+                            <Followers user={user} />
+                            <Followings user={user} />
                         </Box>
                     </Grid>
                 </Grid>

@@ -60,6 +60,16 @@ const AuthReducer = (state, action) => {
                 ...state,
                 noti: items
             }
+        case "ADD_SOCKET":
+            return {
+                ...state,
+                socket: action.payload
+            }
+        case "ADD_ONLINE_USERS":
+            return {
+                ...state,
+                onlineUsers: action.payload
+            }
         default:
             return state
     }

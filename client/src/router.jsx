@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Template from './components/nav/template'
 import { AuthContext } from './context/AuthContext'
@@ -12,11 +12,11 @@ import ViewPost from './pages/viewPost'
 import AllFriends from './pages/allFriends'
 import axios from 'axios'
 import Notifications from './pages/notifications'
+import { io } from 'socket.io-client'
 
 const Router = () => {
     const { user, dispatch } = useContext(AuthContext)
-    console.log("@user:", user)
-
+    const socket = io("ws://localhost:7000")
 
     const getNotifications = (receiver) => {
         axios.get(`${process.env.REACT_APP_API_SERVICE}/api/notifications/${receiver}`)
@@ -29,10 +29,18 @@ const Router = () => {
             })
     }
 
-
     useEffect(() => {
-        if (user != null) getNotifications(user._id)
-    }, [user])
+        dispatch({ type: "ADD_SOCKET", payload: socket })
+        if (user != null) {
+            socket?.emit("addUser", user._id)
+            getNotifications(user._id)
+        }
+    }, [])
+
+    socket?.on("getUsers", (users) => {
+        // if(users != null) setOnlineUsers(users)
+        dispatch({ type: "ADD_ONLINE_USERS", payload: users })
+    })
 
     return (
         <Template>

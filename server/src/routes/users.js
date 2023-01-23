@@ -87,9 +87,19 @@ router.get("/friends/:userId", async (req, res) => {
         console.log("friends:", friends)
 
         let friendsList = []
+        
+        // get all users whome user is following
+        // friends.map((friend) => {
+        //     const {_id, username, profilePicture, createdAt, updatedAt } = friend
+        //     friendsList.push({_id, username, profilePicture, createdAt, updatedAt })
+        // })
+
+        // return users only if both follow each other
         friends.map((friend) => {
-            const {_id, username, profilePicture } = friend
-            friendsList.push({_id, username, profilePicture })
+            if(friend.followings.includes(req.params.userId)){
+                const {_id, username, profilePicture, createdAt, updatedAt } = friend
+                friendsList.push({_id, username, profilePicture, createdAt, updatedAt })
+            }
         })
         res.status(200).json(friendsList)
     } catch (error) {
@@ -97,6 +107,43 @@ router.get("/friends/:userId", async (req, res) => {
         res.status(500).json(error)
     }
 })
+
+// get friends followers
+router.get("/friends/followers/:userId", async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId)
+        console.log("user:", user)
+        const followers =  await Promise.all(
+            user.followers.map((friendId) => {
+                return User.findById(friendId)
+            })
+        )
+
+        res.status(200).json(followers)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+})
+
+// get friends followers
+router.get("/friends/followings/:userId", async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId)
+        console.log("user:", user)
+        const followings =  await Promise.all(
+            user.followings.map((friendId) => {
+                return User.findById(friendId)
+            })
+        )
+
+        res.status(200).json(followings)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+})
+
 
 // follow user
 router.put("/:id/follow", async (req, res) => {

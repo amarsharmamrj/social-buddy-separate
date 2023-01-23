@@ -21,7 +21,7 @@ import { useSnackbar } from "notistack";
 const PF = process.env.REACT_APP_PUBLIC_FOLDER;
 
 const MessengerOtherScreen = () => {
-    const { user, dispatch, noti: notifications } = useContext(AuthContext)
+    const { user, dispatch, noti: notifications, socket: currentSocket } = useContext(AuthContext)
     const { enqueueSnackbar } = useSnackbar()
     const emojiRef = useRef();
     const emojiButtonRef = useRef();
@@ -48,7 +48,9 @@ const MessengerOtherScreen = () => {
 
     const [value, setValue] = useState(0);
 
-    const socket = useRef(io("ws://localhost:7000"))
+    const socket = { current: currentSocket}
+
+    // const socket = useRef(io("ws://localhost:7000"))
     // let count = 0
     // let socket = {current: null}
 

@@ -5,7 +5,7 @@ import axios from 'axios'
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-const Freinds = (props) => {
+const ProfileHomeFollowers = (props) => {
     const [freindsList, setFriendsList] = useState([])
     const dummyImage = "https://gravatar.com/avatar/dd7eb5a6be08145cfd591ceae8f341ca?s=400&d=mp&r=x"
     const PF = process.env.REACT_APP_PUBLIC_FOLDER;
@@ -17,7 +17,7 @@ const Freinds = (props) => {
     }
 
     const fetchFreinds = () => {
-        axios.get(`${process.env.REACT_APP_API_SERVICE}/api/users/friends/${props.user._id}`)
+        axios.get(`${process.env.REACT_APP_API_SERVICE}/api/users/friends/followers/${props.user._id}`)
             .then((res) => {
                 console.log("res:", res.data)
                 setFriendsList(res.data)
@@ -34,9 +34,9 @@ const Freinds = (props) => {
 
 
     return (
-        <Box className="paddingOneRem">
-            <Paper elevation={4} sx={{ borderRadius: "10px" }}>
-                <h1 style={{ fontSize: "20px", fontWeight: "700", color: "grey", margin: "0", padding: "10px 0 0 15px" }}>User Freinds ({freindsList.length})</h1>
+        <Box className="profile-home">
+            {/* <Paper elevation={4}> */}
+                <h1 style={{ fontSize: "20px", fontWeight: "700", color: "grey", margin: "0", padding: "10px 0 0 15px" }}>All Followers ({freindsList.length})</h1>
                 <List>
                     {
                         freindsList.length > 0 ? (
@@ -61,7 +61,7 @@ const Freinds = (props) => {
                                     </Box>
                                 )
                             })
-                        ) : (<div style={{ padding: "1rem" }}>No Friends yet, add friends</div>)
+                        ) : (<div style={{ padding: "1rem" }}>No Followers</div>)
                     }
                 </List>
                 <Box sx={{ textAlign: "center" }}>
@@ -74,9 +74,9 @@ const Freinds = (props) => {
                     }
 
                 </Box>
-            </Paper>
+            {/* </Paper> */}
         </Box>
     )
 }
 
-export default Freinds
+export default ProfileHomeFollowers

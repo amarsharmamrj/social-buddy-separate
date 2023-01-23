@@ -1,10 +1,10 @@
 import { Box } from "@mui/material"
 import OnlineList from "./onlineList"
 
-const OnlineFriends = () => {
+const OnlineFriends = (props) => {
     return (
         <Box className="online-friends-section">
-                <OnlineList />
+                <OnlineList onlineUsers={props.onlineUsers} />
         </Box>
     )
 }

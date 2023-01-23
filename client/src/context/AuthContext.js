@@ -19,7 +19,9 @@ const INITIAL_STATE = {
     user: parsedUser,
     isFetching: false,
     error: false,
-    noti: []
+    noti: [],
+    socket: null,
+    onlineUsers: []
     // noti: parsedNotifications
 }
 
@@ -34,6 +36,8 @@ export const AuthContextProvider = ({ children }) => {
                 isFetching: state.isFetching,
                 error: state.error,
                 noti: state.noti,
+                socket: state.socket,
+                onlineUsers: state.onlineUsers,
                 dispatch
             }}>
             {children}

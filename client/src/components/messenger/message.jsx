@@ -1,4 +1,3 @@
-import { format } from 'timeago.js'
 import moment from 'moment'
 import { useRef } from 'react'
 import { useEffect } from 'react'
@@ -49,8 +48,8 @@ const Message = (props) => {
                     )
                 }
                 <div className="time">
-                    <span>{moment(props.message.createdAt).format("hh:mm a")}, </span>
-                    <span>{format(props.message.createdAt)}</span>
+                    <span>{moment(props.message.createdAt).fromNow()}</span>
+                    {/* <span>{format(props.message.createdAt)}</span> */}
                 </div>
                 {
                     !props.message.deleted && props.own ? (

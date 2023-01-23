@@ -5,13 +5,13 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import InsertCommentIcon from '@mui/icons-material/InsertComment';
 import ShareIcon from '@mui/icons-material/Share';
 import { useEffect, useState } from "react";
-import { format } from 'timeago.js'
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useRef } from "react";
+import moment from 'moment'
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import LinkIcon from '@mui/icons-material/Link';
@@ -234,7 +234,7 @@ const Post = (props) => {
                                     <img src="https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="" />
                                 </Link>
                                 <Typography className="author-name" variant="h4" sx={{ display: "inline" }}>{user.username}</Typography>
-                                <Typography className="post-time" variant="h6" sx={{ display: "inline" }}>{format(post.createdAt)}</Typography>
+                                <Typography className="post-time" variant="h6" sx={{ display: "inline" }}>{moment(post.createdAt).fromNow()}</Typography>
                             </Stack>
                         </div>
                         <IconButton aria-label="menu" color="success" onClick={handlePostMenu}>

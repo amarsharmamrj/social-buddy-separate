@@ -65,3 +65,17 @@ export const RemoveNoti = (item) => {
         payload: item
     }
 }
+
+export const AddSocket = (item) => {
+    return {
+        type: "ADD_SOCKET",
+        payload: item
+    }
+}
+
+export const AddOnlineUsers = (data) => {
+    return {
+        type: "ADD_ONLINE_USERS",
+        payload: data
+    }
+}

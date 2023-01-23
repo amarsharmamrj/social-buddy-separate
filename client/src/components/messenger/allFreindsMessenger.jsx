@@ -64,6 +64,9 @@ const AllFreindsMessenger = (props) => {
         axios.get(`${process.env.REACT_APP_API_SERVICE}/api/users/friends/${props.currentUser._id}`)
             .then((res) => {
                 // console.log("fetchFreinds:", res.data)
+                // setFriendsList(res.data.sort((p1, p2) => {
+                //     return new Date(p2.updatedAt) - new Date(p1.updatedAt)
+                // }))
                 setFriendsList(res.data)
 
             })

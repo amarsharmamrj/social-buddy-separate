@@ -23,7 +23,7 @@ const PF = process.env.REACT_APP_PUBLIC_FOLDER;
 const image = "../assets/chat.webp"
 
 const MessengerOtherScreen = () => {
-    const { user, dispatch, noti: notifications } = useContext(AuthContext)
+    const { user, dispatch, noti: notifications, socket: currentSocket } = useContext(AuthContext)
     const { enqueueSnackbar } = useSnackbar()
     const emojiRef = useRef();
     const emojiButtonRef = useRef();
@@ -49,7 +49,9 @@ const MessengerOtherScreen = () => {
 
     const [value, setValue] = useState(0);
 
-    const socket = useRef(io("ws://localhost:7000"))
+    // const socket = useRef(io("ws://localhost:7000"))
+    const socket = { current: currentSocket }
+    // const socket = useRef(io("ws://localhost:7000"))
     // let count = 0
     // let socket = {current: null}
 
@@ -247,8 +249,12 @@ const MessengerOtherScreen = () => {
     const getConversation = () => {
         axios.get(`${process.env.REACT_APP_API_SERVICE}/api/conversations/${user._id}`)
             .then((res) => {
-                // console.log("conv res:", res.data)
-                setConversation(res.data)
+                console.log("conv res:", res.data)
+                setConversation(
+                    res.data.sort((p1, p2) => {
+                        return new Date(p2.updatedAt) - new Date(p1.updatedAt)
+                    })
+                )
             })
             .catch((err) => {
                 console.log("conv err:", err)
