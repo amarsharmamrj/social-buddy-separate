@@ -1,4 +1,4 @@
-import { IconButton, TextField, ThemeProvider, Tooltip } from "@mui/material"
+import { IconButton, Skeleton, TextField, ThemeProvider, Tooltip } from "@mui/material"
 import { Box, Stack } from "@mui/system"
 import Message from "./message"
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
@@ -23,6 +23,7 @@ import SpeedDialAction from '@mui/material/SpeedDialAction';
 import FileCopyIcon from '@mui/icons-material/FileCopyOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import PrintIcon from '@mui/icons-material/Print';
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import ShareIcon from '@mui/icons-material/Share';
 import EditIcon from '@mui/icons-material/Edit';
 import AddLocationAltIcon from '@mui/icons-material/AddLocationAlt';
@@ -74,15 +75,31 @@ const Conversation = (props) => {
 
     return (
         <Box className="coversation-box">
-            <CurrentChatHeader
-                friendId={props.messages.length > 0 ? props.currentChat.members.find((item) => item != props.currentUser._id) : null}
-                typing={props.freindIsTyping == true && props.freindIsTypingConvId == props.activeConv}
-                currentChat={props.currentChat}
-                getConversation={props.getConversation}
-                setCurrentChat={props.setCurrentChat}
-                handleChat={props.handleChat}
-                setUser={setUser}
-            />
+            {
+                !props.messagesLoading ? (
+                    <CurrentChatHeader
+                        friendId={props.messages.length > 0 ? props.currentChat.members.find((item) => item != props.currentUser._id) : null}
+                        typing={props.freindIsTyping == true && props.freindIsTypingConvId == props.activeConv}
+                        currentChat={props.currentChat}
+                        getConversation={props.getConversation}
+                        setCurrentChat={props.setCurrentChat}
+                        handleChat={props.handleChat}
+                        setUser={setUser}
+                    />
+                ) : (
+                    <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", padding: "0.27rem" }}>
+                        {
+                            window.innerWidth < 800 && (
+                                <IconButton onClick={() => props?.handleChat("recent")} sx={{ marginRight: "0.5rem" }}>
+                                    <KeyboardBackspaceIcon />
+                                </IconButton>
+                            )
+                        }
+                        <Skeleton variant="circular" height={25} width={25} />
+                        <Skeleton variant="rectangular" sx={{ height: "20px", width: "40%", margin: "0 0.5rem" }} />
+                    </div>
+                )
+            }
             <div ref={props.emojiRef} className="emoji-container">
                 <EmojiPicker
                     onEmojiClick={emojiSelected}
@@ -96,25 +113,36 @@ const Conversation = (props) => {
             }
             <Box id="chats-box" className="chats-box" style={{ backgroundImage: `url(${PF}chat-bg-1.webp)` }}>
                 {
-                    props.messages.length > 0 ? (
-                        props.messages.map((message, i) => {
-                            return <>
-                                <Message
-                                    key={message._id}
-                                    message={message}
-                                    own={props.currentUser._id === message.sender ? true : false}
-                                    messages={props.messages}
-                                    currentUser={props.currentUser}
-                                    user={user}
-                                    handleMessageDelete={props.handleMessageDelete}
-                                />
-                            </>
-                        })
+                    !props.messagesLoading ? (
+                        props.messages.length > 0 ? (
+                            props.messages.map((message, i) => {
+                                return <>
+                                    <Message
+                                        key={message._id}
+                                        message={message}
+                                        own={props.currentUser._id === message.sender ? true : false}
+                                        messages={props.messages}
+                                        currentUser={props.currentUser}
+                                        user={user}
+                                        handleMessageDelete={props.handleMessageDelete}
+                                    />
+                                </>
+                            })
+                        ) : (
+                            <div className="no-messages">
+                                <p>Waiting for your message!</p>
+                                <img src="https://media.tenor.com/-9RZRzkWhx4AAAAC/sigh-message.gif" alt="gif" />
+                            </div>
+                        )
                     ) : (
-                        <div className="no-messages">
-                            <p>Waiting for your message!</p>
-                            <img src="https://media.tenor.com/-9RZRzkWhx4AAAAC/sigh-message.gif" alt="gif" />
-                        </div>
+                        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => {
+                            return (
+                                <div className={item == 2 || item == 4 || item == 7 || item == 10 ? "message-box own" : "message-box"}>
+                                    <Skeleton variant="circular" height={28} width={28} sx={{ backgroundColor: "#4d4d50", margin: "0 0.4rem" }} />
+                                    <Skeleton variant="rectangular" sx={{ height: "40px", width: "70%", backgroundColor: "#4d4d50", margin: "0 0.5rem" }} />
+                                </div>
+                            )
+                        })
                     )
                 }
                 {

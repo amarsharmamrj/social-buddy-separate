@@ -1,4 +1,4 @@
-import { Badge, Divider, List, ListItem, ListItemIcon, ListItemText } from "@mui/material"
+import { Badge, Divider, List, ListItem, ListItemIcon, ListItemText, Skeleton } from "@mui/material"
 import { Box } from "@mui/system"
 import { useContext, useEffect } from "react"
 import axios from 'axios'
@@ -13,6 +13,7 @@ const AllFreindsMessenger = (props) => {
     const { noti } = useContext(AuthContext)
 
     const [freindsList, setFriendsList] = useState([])
+    const [freindsListLoading, setFreindsListLoading] = useState(true)
     const [messageFromUsers, setMessageFromUsers] = useState([])
 
     const profileStyle = {
@@ -67,10 +68,12 @@ const AllFreindsMessenger = (props) => {
                 // setFriendsList(res.data.sort((p1, p2) => {
                 //     return new Date(p2.updatedAt) - new Date(p1.updatedAt)
                 // }))
+                setFreindsListLoading(false)
                 setFriendsList(res.data)
 
             })
             .catch((err) => {
+                setFreindsListLoading(false)
                 console.log("err:", err)
             })
     }
@@ -98,41 +101,52 @@ const AllFreindsMessenger = (props) => {
             <p style={{ padding: "1rem 0 0 1rem", margin: "0" }}>My Friends</p>
             <List key="all-freinds-key">
                 {
-                    freindsList.length > 0 ? (
-                        freindsList.map((item, i) => {
-                            return (
-                                <>
-                                    <ListItem key={`all-online${i}`} onClick={() => handleAddCoversation(item._id)} className="messenger-all-friends-list-item">
-                                        <ListItemIcon key={`all-online-icon${i}`} style={{ position: "relative", minWidth: "auto" }}>
-                                            <img
-                                                style={profileStyle}
-                                                src={(item.profilePicture == '') ? dummyImage : PF + item.profilePicture} alt={item.username}
-                                            />
-                                        </ListItemIcon>
-                                        {console.log("messageFromUsers:", props.messageFromUsers)}
-                                        {console.log("noti all:", noti)}
-                                        {/* {noti.length > 0 && noti.some((notiItem) =>  notiItem.sender == item._id) ? (
+                    !freindsListLoading ? (
+                        freindsList.length > 0 ? (
+                            freindsList.map((item, i) => {
+                                return (
+                                    <>
+                                        <ListItem key={`all-online${i}`} onClick={() => handleAddCoversation(item._id)} className="messenger-all-friends-list-item">
+                                            <ListItemIcon key={`all-online-icon${i}`} style={{ position: "relative", minWidth: "auto" }}>
+                                                <img
+                                                    style={profileStyle}
+                                                    src={(item.profilePicture == '') ? dummyImage : PF + item.profilePicture} alt={item.username}
+                                                />
+                                            </ListItemIcon>
+                                            {console.log("messageFromUsers:", props.messageFromUsers)}
+                                            {console.log("noti all:", noti)}
+                                            {/* {noti.length > 0 && noti.some((notiItem) =>  notiItem.sender == item._id) ? (
                                             <Badge badgeContent="new" color="error">
                                                 <ListItemText key={`all-online-text${i}`} className="messenger-freind-name">{item.username}</ListItemText>
                                             </Badge>
                                         ) : ( */}
-                                        <ListItemText key={`all-online-text${i}`} className="messenger-freind-name">{item.username}</ListItemText>
-                                        {/* )} */}
-                                        {(noti.length > 0 && noti.some((notiItem) => notiItem.sender == item._id)) && <NotificationsActiveIcon sx={{ color: "#d32f2f" }} />}
+                                            <ListItemText key={`all-online-text${i}`} className="messenger-freind-name">{item.username}</ListItemText>
+                                            {/* )} */}
+                                            {(noti.length > 0 && noti.some((notiItem) => notiItem.sender == item._id)) && <NotificationsActiveIcon sx={{ color: "#d32f2f" }} />}
 
-                                    </ListItem>
-                                    <Divider key={`all-online-divider${i}`} />
-                                </>
+                                        </ListItem>
+                                        <Divider key={`all-online-divider${i}`} />
+                                    </>
+                                )
+                            })
+                        ) : (
+                            <div style={{ display: "flex", alignItems: "center" }}>
+                                <div className="no-messages">
+                                    <p style={{ color: "grey", fontSize: "1rem", fontWeight: "500", textAlign: "center" }}>No freinds yet! Add new freinds.</p>
+                                    {/* <img src={`${PF}chat-bg-1.webp`} alt="gif" /> */}
+                                    <img style={{ height: "8rem" }} src="https://media.tenor.com/Zh-rihpJKbEAAAAC/love-komik.gif" alt="gif" />
+                                </div>
+                            </div>
+                        )
+                    ) : (
+                        [1, 2, 3, 4, 5].map((i) => {
+                            return (
+                                <div style={{ display: "flex", alignItems: "center", padding: "0.5rem" }}>
+                                    <Skeleton variant="circular" sx={{ height: "25px", width: "25px", padding: "0.5rem" }} />
+                                    <Skeleton variant="rectangular" sx={{ height: "20px", width: "70%", margin: "0 0.5rem" }} />
+                                </div>
                             )
                         })
-                    ) : (
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                            <div className="no-messages">
-                                <p style={{ color: "grey", fontSize: "1rem", fontWeight: "500", textAlign: "center" }}>No freinds yet! Add new freinds.</p>
-                                {/* <img src={`${PF}chat-bg-1.webp`} alt="gif" /> */}
-                                <img style={{ height: "8rem" }} src="https://media.tenor.com/Zh-rihpJKbEAAAAC/love-komik.gif" alt="gif" />
-                            </div>
-                        </div>
                     )
                 }
             </List>

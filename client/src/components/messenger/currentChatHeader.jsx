@@ -11,6 +11,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { AuthContext } from "../../context/AuthContext";
 import VolumeMuteIcon from '@mui/icons-material/VolumeMute';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 
 const dummyImage = "https://gravatar.com/avatar/dd7eb5a6be08145cfd591ceae8f341ca?s=400&d=mp&r=x"
 const PF = process.env.REACT_APP_PUBLIC_FOLDER;
@@ -117,12 +118,12 @@ const CurrentChatHeader = (props) => {
                     {/* <MenuItem component={Link} onClick={() => handleCopyPost(post._id)}><LinkIcon sx={{ marginRight: "0.5rem" }} /> Copy link to post</MenuItem> */}
                     {/* <MenuItem component={Link} onClick={() => handleUnfollow(post.userId)}><DoDisturbOnIcon sx={{ marginRight: "0.5rem" }} /> Unfollow {user.username}</MenuItem> */}
                     <MenuItem component={Link} to={`/profile/${user.username}`}><VisibilityIcon sx={{ marginRight: "0.5rem" }} /> View profile</MenuItem>
-                    
-                    <MenuItem onClick={()=>handleMuteUnmuteNotifySound(!currentUser?.muteNotifySound)}>
-                        {currentUser?.muteNotifySound == true ?  <VolumeMuteIcon sx={{ marginRight: "0.5rem" }} /> : <VolumeOffIcon sx={{ marginRight: "0.5rem" }} />}
+
+                    <MenuItem onClick={() => handleMuteUnmuteNotifySound(!currentUser?.muteNotifySound)}>
+                        {currentUser?.muteNotifySound == true ? <VolumeMuteIcon sx={{ marginRight: "0.5rem" }} /> : <VolumeOffIcon sx={{ marginRight: "0.5rem" }} />}
                         {currentUser?.muteNotifySound == true ? "Unmute" : "Mute"} sound
                     </MenuItem>
-                    
+
                     <MenuItem component={Link} onClick={handleClickOpen}><DeleteIcon sx={{ marginRight: "0.5rem" }} /> Delete all Messages</MenuItem>
                 </>
             }
@@ -138,6 +139,13 @@ const CurrentChatHeader = (props) => {
             <div className="current-chat-info-header">
                 {/* {console.log("abba abda:", user)} */}
                 <div className="left">
+                    {
+                        window.innerWidth < 800 && (
+                            <IconButton onClick={() => props?.handleChat("recent")} sx={{marginRight: "0.5rem"}}>
+                                <KeyboardBackspaceIcon />
+                            </IconButton>
+                        )
+                    }
                     <Link component={Link} to={`/profile/${user.username}`}>
                         <img
                             src={(user.profilePicture == '') ? dummyImage : PF + user.profilePicture} alt={user.username}

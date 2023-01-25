@@ -5,6 +5,7 @@ import { useState } from "react"
 import { Link } from "react-router-dom"
 import { useContext } from "react"
 import { AuthContext } from "../../context/AuthContext"
+import OnlineListSkeleton from "./onlineListSkeleton"
 
 const OnlineList = (props) => {
     const dummyImage = "https://gravatar.com/avatar/dd7eb5a6be08145cfd591ceae8f341ca?s=400&d=mp&r=x"
@@ -72,7 +73,9 @@ const OnlineList = (props) => {
                                 </Link>
                             )
                         })
-                    ) : ("No Friends yet, add friends")
+                    ) : (
+                        <OnlineListSkeleton />
+                    )
                 }
             </List>
         </>

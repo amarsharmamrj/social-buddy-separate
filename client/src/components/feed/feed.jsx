@@ -6,6 +6,7 @@ import { useState } from "react"
 import { useEffect } from "react"
 import { useContext } from "react"
 import { AuthContext } from "../../context/AuthContext"
+import PostSkeleton from "./postSkeleton"
 
 const Feed = (props) => {
     const [posts, setPosts] = useState([])
@@ -42,7 +43,11 @@ const Feed = (props) => {
                         posts.map((post, i) => {
                             return <Post key={i} post={post} />
                         })
-                    ) : ("No posts yet")
+                    ) : (
+                        [1,2].map((i) => {
+                            return <PostSkeleton key={i} />
+                        })
+                    )
                 }
             </div>
         </Box>

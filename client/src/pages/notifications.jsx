@@ -1,4 +1,4 @@
-import { List } from "@mui/material";
+import { List, Skeleton } from "@mui/material";
 import { useContext, useEffect } from "react";
 import Notification from "../components/notification/notification";
 import { AuthContext } from "../context/AuthContext";
@@ -27,15 +27,25 @@ const Notifications = () => {
 
     return (
         <div className="all-noti">
-                {
-                    noti?.length ? (
-                        noti.map((item) => {
-                            return (
-                                <Notification noti={item} allNoti={noti} setNoti={setNoti} />
-                            )
-                        })
-                    ) : ("No Notifications")
-                }
+            {
+                noti?.length ? (
+                    noti.map((item) => {
+                        return (
+                            <Notification noti={item} allNoti={noti} setNoti={setNoti} />
+                        )
+                    })
+                ) : (
+                    [1, 2, 3, 4, 5].map((i) => {
+                        return (
+                            <div style={{ padding: "0.5rem", display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
+                                <Skeleton variant="circular" width={60} height={60} />
+                                <Skeleton variant="rectangular" sx={{ height: "25px", width: "90%", margin: "0 0.5rem"}} />
+                                <Skeleton variant="rectangular" sx={{ height: "25px", width: "8px"}} />
+                            </div>
+                        )
+                    })
+                )
+            }
         </div>
     )
 }

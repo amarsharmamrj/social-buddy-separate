@@ -1,4 +1,4 @@
-import { Button, Grid, List, TextField } from "@mui/material"
+import { Button, Grid, List, Skeleton, TextField } from "@mui/material"
 import { Box } from "@mui/system"
 import Conversation from "../components/messenger/conversation"
 import OnlineFreindsMessenger from "../components/messenger/allFreindsMessenger"
@@ -30,8 +30,10 @@ const MessengerOtherScreen = () => {
     const messageRef = useRef();
     const theme = useTheme();
     const [conversation, setConversation] = useState([])
+    const [conversationLoading, setConversationLoading] = useState(true)
     const [currentChat, setCurrentChat] = useState(null)
     const [messages, setMessages] = useState([])
+    const [messagesLoading, setMessagesLoading] = useState(true)
     const [newMessage, setNewMessage] = useState("")
     const [arrivalMessage, setArrivalMessage] = useState(null)
     const [onlineFriendIds, setOnlineFriendIds] = useState(null)
@@ -104,6 +106,7 @@ const MessengerOtherScreen = () => {
     }
 
     const handelSelectConversation = (item) => {
+        setMessagesLoading(true)
         // clear notification for selected chat
         let freindId = item.members.find((id) => id != user._id)
         let items = notifications.filter((notiItem) => notiItem.sender != freindId)
@@ -186,6 +189,7 @@ const MessengerOtherScreen = () => {
 
             axios.post(`${process.env.REACT_APP_API_SERVICE}/api/messages/`, model)
                 .then((res) => {
+                    setMessagesLoading(false)
                     setMessages([...messages, res.data])
                     setNewMessage('')
                     setIsImageSelected(false)
@@ -251,15 +255,18 @@ const MessengerOtherScreen = () => {
         arrivalMessage &&
             currentChat?.members.includes(arrivalMessage.sender) &&
             setMessages((prev) => [...prev, arrivalMessage])
+        setMessagesLoading(false)
     }, [arrivalMessage, currentChat])
 
     const getConversation = () => {
         axios.get(`${process.env.REACT_APP_API_SERVICE}/api/conversations/${user._id}`)
             .then((res) => {
                 // console.log("conv res:", res.data)
+                setConversationLoading(false)
                 setConversation(res.data)
             })
             .catch((err) => {
+                setConversationLoading(false)
                 console.log("conv err:", err)
             })
     }
@@ -272,6 +279,7 @@ const MessengerOtherScreen = () => {
             .then((res) => {
                 // console.log("#messages:", res.data)
                 setMessages(res.data)
+                setMessagesLoading(false)
             })
             .catch((err) => {
                 console.log(err)
@@ -443,7 +451,8 @@ const MessengerOtherScreen = () => {
         console.log("upload cloudinaryRef.current:", cloudinaryRef.current)
         widgetRef.current = cloudinaryRef.current.createUploadWidget({
             cloudName: "dvhb339oe",
-            uploadPreset: "chtt7osr"
+            uploadPreset: "chtt7osr",
+            sources: ["local", "camera"]
         }, (error, result) => {
             console.log("cloudinary result:", result)
             if (result.event === 'upload-added') {
@@ -453,6 +462,7 @@ const MessengerOtherScreen = () => {
                     setIsImageSelected(true)
                     setImageSelected(result.info.secure_url)
                 }
+                widgetRef.current.close()
                 console.log("upload success:", result)
             } else if (result.event === 'close') {
                 console.log("upload closed:")
@@ -496,26 +506,37 @@ const MessengerOtherScreen = () => {
                             /> */}
                     <List>
                         {
-                            conversation.length > 0 ? (
-                                conversation.map((item, i) => {
+                            !conversationLoading ? (
+                                conversation.length > 0 ? (
+                                    conversation.map((item, i) => {
+                                        return (
+                                            <div key={`conv${i}`} onClick={() => handelSelectConversation(item)}>
+                                                <RecentChats
+                                                    key={`recentchat${i}`}
+                                                    conversation={item}
+                                                    currentUser={user}
+                                                    onlineFriendIds={onlineFriendIds}
+                                                    activeConv={activeConv}
+                                                    noti={notifications}
+                                                />
+                                            </div>
+                                        )
+                                    })
+                                ) : (
+                                    <div className="no-messages">
+                                        <p style={{ color: "grey", fontSize: "1.5rem", textAlign: "center", fontWeight: "500" }}>No comnversation, Choose a freind to start.</p>
+                                        <img src="https://media.tenor.com/8GjbkVyjbakAAAAC/minions-heart.gif" alt="gif" />
+                                    </div>
+                                )
+                            ) : (
+                                [1, 2, 3, 4, 5].map((i) => {
                                     return (
-                                        <div key={`conv${i}`} onClick={() => handelSelectConversation(item)}>
-                                            <RecentChats
-                                                key={`recentchat${i}`}
-                                                conversation={item}
-                                                currentUser={user}
-                                                onlineFriendIds={onlineFriendIds}
-                                                activeConv={activeConv}
-                                                noti={notifications}
-                                            />
+                                        <div style={{ display: "flex", alignItems: "center", padding: "0.5rem 0" }}>
+                                            <Skeleton variant="circular" sx={{ height: "40px", width: "40px", padding: "0.5rem" }} />
+                                            <Skeleton variant="rectangular" sx={{ height: "20px", width: "70%", margin: "0 0.5rem" }} />
                                         </div>
                                     )
                                 })
-                            ) : (
-                                <div className="no-messages">
-                                    <p style={{ color: "grey", fontSize: "1.5rem", textAlign: "center", fontWeight: "500" }}>No comnversation, Choose a freind to start.</p>
-                                    <img src="https://media.tenor.com/8GjbkVyjbakAAAAC/minions-heart.gif" alt="gif" />
-                                </div>
                             )
                         }
                     </List>
@@ -526,6 +547,7 @@ const MessengerOtherScreen = () => {
                     {
                         currentChat ? (
                             <Conversation
+                                messagesLoading={messagesLoading}
                                 messages={messages}
                                 currentChat={currentChat}
                                 setCurrentChat={setCurrentChat}

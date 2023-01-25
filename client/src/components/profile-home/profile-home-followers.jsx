@@ -1,4 +1,4 @@
-import { Button, List, ListItem, ListItemIcon, ListItemText, Paper } from "@mui/material"
+import { Button, List, ListItem, ListItemIcon, ListItemText, Paper, Skeleton } from "@mui/material"
 import { Box } from "@mui/system"
 import { useEffect } from "react";
 import axios from 'axios'
@@ -36,44 +36,55 @@ const ProfileHomeFollowers = (props) => {
     return (
         <Box className="profile-home">
             {/* <Paper elevation={4}> */}
-                <h1 style={{ fontSize: "20px", fontWeight: "700", color: "grey", margin: "0", padding: "10px 0 0 15px" }}>All Followers ({freindsList.length})</h1>
-                <List>
-                    {
-                        freindsList.length > 0 ? (
-                            freindsList.map((friend, i) => {
-                                return (
-                                    <Box key={`friend${i}`} className="cardStyleFriendsList">
-                                        <Link to={`/profile/${friend.username}`} style={{ textDecoration: "none" }}>
-                                            <ListItem sx={{ padding: "0" }}>
-                                                <ListItemIcon>
-                                                    {/* <img 
+            <h1 style={{ fontSize: "20px", fontWeight: "700", color: "grey", margin: "0", padding: "10px 0 0 15px" }}>All Followers ({freindsList.length})</h1>
+            <List>
+                {
+                    freindsList.length > 0 ? (
+                        freindsList.map((friend, i) => {
+                            return (
+                                <Box key={`friend${i}`} className="cardStyleFriendsList">
+                                    <Link to={`/profile/${friend.username}`} style={{ textDecoration: "none" }}>
+                                        <ListItem sx={{ padding: "0" }}>
+                                            <ListItemIcon>
+                                                {/* <img 
                                                         style={profileStyle}
                                                         src={(friend.profilePicture == '') ?  dummyImage : PF + friend.prifilePicture} alt={friend.username}
                                 /> */}
-                                                        <img
+                                                <img
                                                     style={profileStyle}
                                                     src={(friend.profilePicture == '') ? dummyImage : PF + friend.profilePicture} alt={friend.username}
-                                            />
-                                                </ListItemIcon>
-                                                <ListItemText>{friend.username}</ListItemText>
-                                            </ListItem>
-                                        </Link>
+                                                />
+                                            </ListItemIcon>
+                                            <ListItemText>{friend.username}</ListItemText>
+                                        </ListItem>
+                                    </Link>
+                                </Box>
+                            )
+                        })
+                    ) : (
+                        [1, 2].map((i) => {
+                            return (
+                                <>
+                                    <Box key={`friend-skeleton${i}`} className="cardStyleFriendsListSkeleton">
+                                        <Skeleton variant="rounded" width={50} height={50} />
+                                        <Skeleton variant="text" sx={{ fontSize: '1.5rem', margin: "0 1rem", width: "90%" }} />
                                     </Box>
-                                )
-                            })
-                        ) : (<div style={{ padding: "1rem" }}>No Followers</div>)
-                    }
-                </List>
-                <Box sx={{ textAlign: "center" }}>
-                    {
-                        freindsList.length > 0 && (
-                            <Button variant="contained" color="success" sx={{ width: "90%", margin: "0 auto 20px auto" }}>
-                                Show more
-                            </Button>
-                        )
-                    }
+                                </>
+                            )
+                        })
+                    )
+                }
+            </List>
+            {/* <Box sx={{ textAlign: "center" }}>
+                {
+                    freindsList.length > 0 && (
+                        <Button variant="contained" color="success" sx={{ width: "90%", margin: "0 auto 20px auto" }}>
+                            Show more
+                        </Button>
+                    )
+                }
 
-                </Box>
+            </Box> */}
             {/* </Paper> */}
         </Box>
     )
