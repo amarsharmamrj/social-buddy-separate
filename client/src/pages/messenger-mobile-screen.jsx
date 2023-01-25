@@ -12,7 +12,7 @@ import { useState, useEffect } from "react"
 import { io } from 'socket.io-client'
 import { useMemo } from "react"
 
-import SwipeableViews from 'react-swipeable-views';
+// import SwipeableViews from 'react-swipeable-views';
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
